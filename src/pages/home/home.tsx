@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react'; // Removido o useEffect
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faStar, 
-  faShoppingCart, 
-  faHeart, 
-  faEye,
+import {
+  faStar,
+  faShoppingCart,
+  faHeart,
   faTruck,
   faExchangeAlt,
   faShieldAlt,
@@ -20,30 +19,15 @@ import './home.css';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState('todos');
+  // O useState para 'selectedCategory' também foi removido, pois não era utilizado.
   const [favorites, setFavorites] = useState<number[]>(
     mockProducts.filter(p => p.isFavorite).map(p => p.id)
   );
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [newArrivals, setNewArrivals] = useState<Product[]>([]);
 
-  useEffect(() => {
-    // Produtos em destaque (os mais bem avaliados)
-    const featured = [...mockProducts]
-      .sort((a, b) => b.rating - a.rating)
-      .slice(0, 4);
-    setFeaturedProducts(featured);
-
-    // Novidades (últimos produtos)
-    const arrivals = [...mockProducts]
-      .filter(p => p.tags.includes('novidade'))
-      .slice(0, 4);
-    setNewArrivals(arrivals);
-  }, []);
+  // Removido o useState e o useEffect para featuredProducts e newArrivals
 
   const handleAddToCart = (product: Product) => {
     console.log('Adicionado ao carrinho:', product);
-    // Aqui você pode implementar a lógica do carrinho
     alert(`${product.name} adicionado ao carrinho!`);
   };
 
@@ -57,23 +41,22 @@ const Home: React.FC = () => {
     });
   };
 
-  const handleViewDetails = (product: Product) => {
-    navigate(`/produto/${product.id}`);
-  };
-
-  const handleCategorySelect = (categoryId: string) => {
-    setSelectedCategory(categoryId);
-  };
-
-  // Atualizar produtos com estado de favorito
+  // 1. Crie a lista base com o status de favorito atualizado em cada renderização.
   const productsWithFavorites = mockProducts.map(product => ({
     ...product,
     isFavorite: favorites.includes(product.id)
   }));
 
-  const filteredProducts = selectedCategory === 'todos'
-    ? productsWithFavorites
-    : productsWithFavorites.filter(product => product.category === selectedCategory);
+  // 2. Derive as listas de destaque e novidades diretamente da lista atualizada.
+  // Isso garante que elas sempre terão o status de favorito correto.
+  const featuredProducts = [...productsWithFavorites]
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 4);
+
+  const newArrivals = [...productsWithFavorites]
+    .filter(p => p.tags.includes('novidade'))
+    .slice(0, 4);
+
 
   const formatPrice = (price: number) => {
     return price.toLocaleString('pt-BR', {
@@ -98,14 +81,14 @@ const Home: React.FC = () => {
               e condições especiais de pagamento.
             </p>
             <div className="hero-actions">
-              <button 
+              <button
                 className="btn-primary"
                 onClick={() => navigate('/produtos')}
               >
                 Comprar Agora
                 <FontAwesomeIcon icon={faArrowRight} />
               </button>
-              <button 
+              <button
                 className="btn-secondary"
                 onClick={() => navigate('/produtos?category=ofertas')}
               >
@@ -167,7 +150,7 @@ const Home: React.FC = () => {
       <section className="categories-section">
         <div className="section-header">
           <h2>Categorias em Destaque</h2>
-          <button 
+          <button
             className="view-all"
             onClick={() => navigate('/produtos')}
           >
@@ -177,13 +160,11 @@ const Home: React.FC = () => {
         </div>
         <div className="categories-grid">
           {categories.slice(0, 6).map(category => (
-            <div 
+            <div
               key={category.id}
               className="category-card"
-              onClick={() => {
-                setSelectedCategory(category.id);
-                navigate('/produtos');
-              }}
+              // A navegação foi mantida, mas a atualização de estado foi removida.
+              onClick={() => navigate(`/produtos?category=${category.id}`)}
             >
               <div className="category-icon">{category.icon}</div>
               <h3>{category.name}</h3>
@@ -193,7 +174,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Produtos em Destaque */}
+      {/* Produtos em Destaque (agora usando a variável `featuredProducts`) */}
       <section className="featured-products">
         <div className="section-header">
           <h2>Produtos em Destaque</h2>
@@ -203,11 +184,11 @@ const Home: React.FC = () => {
           </div>
         </div>
         <div className="products-grid">
-          {featuredProducts.map(product => (
+          {featuredProducts.map(product => ( // Esta lista agora é reativa aos favoritos
             <div key={product.id} className="product-card-mini">
               <div className="product-image">
                 <img src={product.image} alt={product.name} />
-                <button 
+                <button
                   className={`favorite-btn ${product.isFavorite ? 'active' : ''}`}
                   onClick={() => handleToggleFavorite(product.id)}
                 >
@@ -225,7 +206,7 @@ const Home: React.FC = () => {
                 <div className="product-rating">
                   <div className="stars">
                     {[...Array(5)].map((_, index) => (
-                      <FontAwesomeIcon 
+                      <FontAwesomeIcon
                         key={index}
                         icon={faStar}
                         className={`star ${index < Math.floor(product.rating) ? 'filled' : ''}`}
@@ -240,7 +221,7 @@ const Home: React.FC = () => {
                     <span className="original">{formatPrice(product.originalPrice)}</span>
                   )}
                 </div>
-                <button 
+                <button
                   className="add-to-cart"
                   onClick={() => handleAddToCart(product)}
                 >
@@ -278,7 +259,7 @@ const Home: React.FC = () => {
                 <small>Segundos</small>
               </div>
             </div>
-            <button 
+            <button
               className="btn-primary"
               onClick={() => navigate('/produtos?category=ofertas')}
             >
@@ -291,7 +272,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Novidades */}
+      {/* Novidades (agora usando a variável `newArrivals`) */}
       <section className="new-arrivals">
         <div className="section-header">
           <h2>Novidades</h2>
@@ -301,12 +282,12 @@ const Home: React.FC = () => {
           </div>
         </div>
         <div className="products-grid">
-          {newArrivals.map(product => (
+          {newArrivals.map(product => ( // Esta lista agora é reativa aos favoritos
             <div key={product.id} className="product-card-mini">
               <div className="product-image">
                 <img src={product.image} alt={product.name} />
                 <span className="new-tag">NOVO</span>
-                <button 
+                <button
                   className={`favorite-btn ${product.isFavorite ? 'active' : ''}`}
                   onClick={() => handleToggleFavorite(product.id)}
                 >
@@ -319,7 +300,7 @@ const Home: React.FC = () => {
                 <div className="product-rating">
                   <div className="stars">
                     {[...Array(5)].map((_, index) => (
-                      <FontAwesomeIcon 
+                      <FontAwesomeIcon
                         key={index}
                         icon={faStar}
                         className={`star ${index < Math.floor(product.rating) ? 'filled' : ''}`}
@@ -331,7 +312,7 @@ const Home: React.FC = () => {
                 <div className="product-price">
                   <span className="current">{formatPrice(product.price)}</span>
                 </div>
-                <button 
+                <button
                   className="add-to-cart"
                   onClick={() => handleAddToCart(product)}
                 >
@@ -350,8 +331,8 @@ const Home: React.FC = () => {
           <h2>Fique por Dentro das Ofertas</h2>
           <p>Inscreva-se para receber descontos exclusivos e novidades</p>
           <form className="newsletter-form">
-            <input 
-              type="email" 
+            <input
+              type="email"
               placeholder="Seu melhor e-mail"
               className="newsletter-input"
             />
