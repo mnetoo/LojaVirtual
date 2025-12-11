@@ -15,7 +15,7 @@ import Header from './components/Header/Header';
 
 function App() {
   return ( 
-        <Router>
+        <Router basename="/LojaVirtual">
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />
