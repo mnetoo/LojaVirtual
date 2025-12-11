@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Removido o useEffect
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -19,12 +19,9 @@ import './home.css';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  // O useState para 'selectedCategory' também foi removido, pois não era utilizado.
   const [favorites, setFavorites] = useState<number[]>(
     mockProducts.filter(p => p.isFavorite).map(p => p.id)
   );
-
-  // Removido o useState e o useEffect para featuredProducts e newArrivals
 
   const handleAddToCart = (product: Product) => {
     console.log('Adicionado ao carrinho:', product);
@@ -41,14 +38,11 @@ const Home: React.FC = () => {
     });
   };
 
-  // 1. Crie a lista base com o status de favorito atualizado em cada renderização.
   const productsWithFavorites = mockProducts.map(product => ({
     ...product,
     isFavorite: favorites.includes(product.id)
   }));
 
-  // 2. Derive as listas de destaque e novidades diretamente da lista atualizada.
-  // Isso garante que elas sempre terão o status de favorito correto.
   const featuredProducts = [...productsWithFavorites]
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 4);
@@ -163,7 +157,6 @@ const Home: React.FC = () => {
             <div
               key={category.id}
               className="category-card"
-              // A navegação foi mantida, mas a atualização de estado foi removida.
               onClick={() => navigate(`/produtos?category=${category.id}`)}
             >
               <div className="category-icon">{category.icon}</div>
@@ -174,7 +167,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Produtos em Destaque (agora usando a variável `featuredProducts`) */}
+      {/* Produtos em Destaque */}
       <section className="featured-products">
         <div className="section-header">
           <h2>Produtos em Destaque</h2>
@@ -272,7 +265,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Novidades (agora usando a variável `newArrivals`) */}
+      {/* Novidades */}
       <section className="new-arrivals">
         <div className="section-header">
           <h2>Novidades</h2>
