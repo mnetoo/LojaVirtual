@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/', // Substitua pelo caminho desejado
+  base: '/LojaVirtual/', // Substitua pelo caminho desejado
   plugins: [
     react(),
     tailwindcss(),
